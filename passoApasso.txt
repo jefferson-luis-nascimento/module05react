@@ -1,0 +1,4 @@
+Executar o comando abaixo para criar aplicação:
+  yarn create react-app moduloreact
+Entrar na pasta da aplicação, nesse caso é:
+  cd moduloreact
