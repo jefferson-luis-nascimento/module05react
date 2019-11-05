@@ -58,7 +58,7 @@ Aguardar instalar as dependencias e depois exluir o arquivo package-lock.json
 Após a exclusão, rode o comando abaixo:
   yarn
 Instalar o prettier:
-  yarn add prettier eslint-config-prettier eslint-plugin-prettier babel-eslint -D
+  yarn add prettier eslint-config-prettier eslint-plugin-prettier babel-eslint eslint-loader -D
 subistituir o conteudo fo arquivo .eslintrc.js para o de baixo:
   module.exports = {
     env: {
@@ -92,7 +92,8 @@ subistituir o conteudo fo arquivo .eslintrc.js para o de baixo:
         'warn',
         { extensions: ['.jsx', '.js']}
       ],
-      'import/prefer-default-export': 'off'
+      'import/prefer-default-export': 'off',
+      "react/state-in-constructor": [0]
     },
   };
 Criar o arquivo .prettierrc na raiz do projeto e incluir o seguinte código:
@@ -101,6 +102,58 @@ Criar o arquivo .prettierrc na raiz do projeto e incluir o seguinte código:
     "trailingComma": "es5"
   }
 
+Configurar rotas e pastas do projeto:
+  Instalar o componente de rotas do react:
+    yarn add react-router-dom
+Criar o arquivo routes.js na pasta src
+Criar uma pasta pages na pasta src
+Dentro da pasta pages, criar a pasta Main e dentro dela
+  Criar o arquivo index.js e dentro dele incluir o seguinte código:
+    import React from 'react';
 
+    export default function Main() {
+      return <h1>Main</h1>;
+    }
 
+Abrir o arquivo routes.js e incluir o codigo abaixo:
+  import React from 'react';
+  import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
+  import Main from './pages/Main';
+
+  export default function Routes() {
+    return (
+      <BrowserRouter>
+        <Switch>
+          <Route path="/" exact component={Main} />
+        </Switch>
+      </BrowserRouter>
+    );
+  }
+Adicionar a biblioteca styled-componets:
+  yarn add styled-components
+Instalar a extensão do vs code vscode-styled-components
+Criar o arquivo styles.js dentro da pasta src/Main e incluir o código abaixo:
+  import styled from 'styled-components';
+
+  export const Title = styled.h1`
+    font-size: 24px;
+    color: #7159c1;
+    font-family: Arial, Helvetica, sans-serif;
+  `;
+
+Instalar React Icons:
+  yarn add react-icons
+Instalar o axios para chamadas de api:
+  yarn add axios
+Criar a pasta services dentro da pasta src
+Criar o arquivo chamado api.js dentro da pasta services e incluir o seguinte código:
+  import axios from 'axios';
+
+  const api = axios.create({
+    baseURL: 'https://api.github.com',
+  });
+
+  export default api;
+Adicionar a biblioteca prop-types:
+  yarn add prop-types
