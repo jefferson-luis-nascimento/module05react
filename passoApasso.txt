@@ -2,3 +2,18 @@ Executar o comando abaixo para criar aplicação:
   yarn create react-app moduloreact
 Entrar na pasta da aplicação, nesse caso é:
   cd moduloreact
+Abrir o vs code com o comando:
+  code .
+Excluir o arquivo manifest.json da pasta public
+Excluir a chamada ao arquivo manifest.json no arquivo index.html da pasta public
+Excluir os seguintes arquivos e suas chamadas:
+  Pasta src, excluir os seguintes arquivos:
+    App.css
+    App.test.js
+    index.css
+    logo.svg
+    serviceWorker.js
+  Remover as chamadas nos seguintes arquivos:
+    index.js => remover as referencias do serviceWorker.js
+    index.js => remover as referencias do index.css
+    App.js => remover as referencias de App.css, App.test.js e logo.svg
