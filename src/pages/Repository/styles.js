@@ -1,4 +1,14 @@
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
 
 export const Loading = styled.div`
   color: #fff;
@@ -6,8 +16,19 @@ export const Loading = styled.div`
   font-weight: bold;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  align-items: flex-start;
+  height: auto;
+  margin-top: 30px;
+  margin-bottom: 30px;
+
+  ${props =>
+    props.loading &&
+    css`
+      svg {
+        margin-right: 30px;
+        animation: ${rotate} 2s linear infinite;
+      }
+    `}
 `;
 
 export const Owner = styled.header`
@@ -98,6 +119,23 @@ export const IssueList = styled.ul`
         font-size: 12px;
         color: #999;
       }
+    }
+  }
+`;
+
+export const IssueFilter = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-bottom: 15px;
+  button {
+    border-radius: 4px;
+    outline: 0;
+    border: 0;
+    padding: 8px;
+    margin: 0 0.25rem;
+    &:nth-child(${props => props.active + 1}) {
+      background: #576574;
+      color: white;
     }
   }
 `;
