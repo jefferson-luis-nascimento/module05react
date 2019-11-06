@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Form, SubmitButton, List } from './styles';
+import { Form, SubmitButton, List, ErrorMessage } from './styles';
 
 export default class Main extends Component {
   state = {
@@ -13,6 +13,7 @@ export default class Main extends Component {
     repositories: [],
     loading: false,
     error: false,
+    duplicated: false,
   };
 
   componentDidMount() {
@@ -42,6 +43,15 @@ export default class Main extends Component {
     this.setState({ loading: true });
 
     try {
+      const repo = repositories.find(
+        r => r.name.toLowerCase() === newRepo.toLowerCase()
+      );
+
+      if (repo) {
+        this.setState({ duplicated: true });
+        throw new Error('Repositório duplicado.');
+      }
+
       const response = await api.get(`/repos/${newRepo}`);
 
       const data = {
@@ -52,6 +62,7 @@ export default class Main extends Component {
         repositories: [...repositories, data],
         newRepo: '',
         error: false,
+        duplicated: false,
       });
     } catch (error) {
       this.setState({ error: true });
@@ -61,11 +72,11 @@ export default class Main extends Component {
   };
 
   handleInputChange = e => {
-    this.setState({ newRepo: e.target.value, error: false });
+    this.setState({ newRepo: e.target.value, error: false, duplicated: false });
   };
 
   render() {
-    const { newRepo, repositories, loading, error } = this.state;
+    const { newRepo, repositories, loading, error, duplicated } = this.state;
 
     return (
       <Container>
@@ -90,6 +101,10 @@ export default class Main extends Component {
             )}
           </SubmitButton>
         </Form>
+
+        {duplicated && (
+          <ErrorMessage>{`${newRepo} já está na lista.`}</ErrorMessage>
+        )}
 
         <List>
           {repositories.map(repo => (

@@ -2,6 +2,7 @@ import styled, { keyframes, css } from 'styled-components';
 
 export const Form = styled.form`
   margin-top: 30px;
+  margin-bottom: 15px;
   display: flex;
   flex-direction: row;
 
@@ -74,4 +75,11 @@ export const List = styled.ul`
       text-decoration: none;
     }
   }
+`;
+
+export const ErrorMessage = styled.span`
+  margin-top: 100px;
+  font-size: 16px;
+  color: #ff6b6b;
+  transition: border 0.25s ease-out;
 `;
