@@ -24,7 +24,7 @@ export const Owner = styled.header`
   img {
     width: 120px;
     border-radius: 50%;
-    margin-top: 20px
+    margin-top: 20px;
   }
 
   h1 {
@@ -55,7 +55,7 @@ export const IssueList = styled.ul`
     border-radius: 4px;
 
     & + li {
-      margin-top: 10px
+      margin-top: 10px;
     }
 
     img {
