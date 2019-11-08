@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { FaSpinner } from 'react-icons/fa';
+import { FaSpinner, FaBackward, FaForward } from 'react-icons/fa';
 
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Loading, Owner, IssueList, IssueFilter } from './styles';
+import { Loading, Owner, IssueList, IssueFilter, Paging } from './styles';
 
 export default class Repository extends Component {
   static propTypes = {
@@ -22,16 +22,19 @@ export default class Repository extends Component {
     issues: [],
     loading: true,
     filters: [
-      { state: 'all', label: 'Todas', active: true },
-      { state: 'open', label: 'Abertas', active: false },
+      { state: 'all', label: 'Todas', active: false },
+      { state: 'open', label: 'Abertas', active: true },
       { state: 'closed', label: 'Fechadas', active: false },
     ],
     filterIndex: 0,
+    page: 1,
+    maxPerPage: 30,
+    totalIssues: 0,
   };
 
   async componentDidMount() {
     const { match } = this.props;
-    const { filters } = this.state;
+    const { filters, maxPerPage } = this.state;
 
     const repoName = decodeURIComponent(match.params.repository);
 
@@ -40,7 +43,7 @@ export default class Repository extends Component {
       api.get(`/repos/${repoName}/issues`, {
         params: {
           state: filters.find(f => f.active).state,
-          per_page: 5,
+          per_page: maxPerPage,
         },
       }),
     ]);
@@ -48,43 +51,76 @@ export default class Repository extends Component {
     this.setState({
       repository: repository.data,
       issues: issues.data,
+      totalIssues: issues.data.length,
       loading: false,
     });
   }
 
   handleFilterClick = async filterIndex => {
-    await this.setState({ filterIndex });
+    const { filters } = this.state;
+
+    const newFilters = filters.map(filter => {
+      return {
+        state: filter.state,
+        label: filter.label,
+        active: false,
+      };
+    });
+
+    newFilters[filterIndex].active = true;
+
+    await this.setState({ filters: newFilters, filterIndex });
     this.loadIssues();
   };
 
   loadIssues = async () => {
     const { match } = this.props;
-    const { filters, filterIndex } = this.state;
+    const { filters, filterIndex, maxPerPage, page } = this.state;
 
     const repoName = decodeURIComponent(match.params.repository);
 
     const response = await api.get(`/repos/${repoName}/issues`, {
       params: {
         state: filters[filterIndex].state,
-        per_page: 5,
+        per_page: maxPerPage,
+        page,
       },
     });
 
-    this.setState({ issues: response.data });
+    this.setState({
+      issues: response.data,
+      totalIssues: response.data.length,
+    });
   };
 
-  handleSubmit = async e => {
-    e.preventDefault();
-    await this.getIssues();
+  handlePaging = async increment => {
+    const { page, filterIndex } = this.state;
+
+    if (increment) {
+      this.setState({ page: page + 1 });
+    } else if (page > 1) {
+      this.setState({ page: page - 1 });
+    }
+
+    await this.setState({ filterIndex });
+    this.loadIssues();
   };
 
   render() {
-    const { repository, issues, loading, filters } = this.state;
+    const {
+      repository,
+      issues,
+      loading,
+      filters,
+      page,
+      totalIssues,
+      maxPerPage,
+    } = this.state;
 
     return (
       <>
         {loading && (
-          <Loading loading={loading}>
+          <Loading loading={String(loading)}>
             <FaSpinner color="#fff" size={30} />
             <span> Carregando...</span>
           </Loading>
@@ -105,6 +141,7 @@ export default class Repository extends Component {
               {filters.map((filter, index) => (
                 <button
                   type="button"
+                  active={index}
                   key={filter.label}
                   onClick={() => this.handleFilterClick(index)}
                 >
@@ -130,6 +167,24 @@ export default class Repository extends Component {
                 </div>
               </li>
             ))}
+
+            <Paging>
+              <button
+                type="button"
+                disabled={page === 1}
+                onClick={() => this.handlePaging(false)}
+              >
+                <FaBackward />
+              </button>
+              <span>{page}</span>
+              <button
+                type="button"
+                disabled={totalIssues !== maxPerPage}
+                onClick={() => this.handlePaging(true)}
+              >
+                <FaForward />
+              </button>
+            </Paging>
           </IssueList>
         </Container>
       </>
